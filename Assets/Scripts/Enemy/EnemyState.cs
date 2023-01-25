@@ -19,6 +19,7 @@ public class EnemyState : MonoBehaviour
     private AudioSource _audioSource;
     private int _minRandom = 0;
     private int _randomNumber;
+    private int attackAnimation = Animator.StringToHash("Attack");
     private enum CharacterState
     {
         Move, Attacking, Idle, Die
@@ -126,10 +127,9 @@ public class EnemyState : MonoBehaviour
             case CharacterState.Move:
                 break;
             case CharacterState.Attacking:
-
                 Quaternion newRotation = Quaternion.LookRotation(_targetPlayer.position - transform.position);
                 transform.rotation = newRotation;
-                _animator.SetTrigger("Attack");
+                _animator.SetTrigger(attackAnimation);
                 break;
             case CharacterState.Idle:
                 break;

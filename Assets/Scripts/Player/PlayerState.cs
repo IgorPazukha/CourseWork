@@ -15,6 +15,8 @@ public class PlayerState : MonoBehaviour
     private Vector3 _movmentVelocity;
     private PlayerInput _playerInput;
     private float _verticalVelocity;
+    private int attackAnimation = Animator.StringToHash("Attack");
+    private int rollAnimation = Animator.StringToHash("Roll");
     private Animator _animator;
     private Player _player;
     private bool _isAttack;
@@ -128,17 +130,16 @@ public class PlayerState : MonoBehaviour
                 break;
             case CharacterState.Attacking:
                 _isAttack = true;
-                _animator.SetTrigger("Attack");
+                _animator.SetTrigger(attackAnimation);
                 _player.CurrentWeapon.Shoot();
 
                 newState = CharacterState.Normal;
                 break;
             case CharacterState.Die:
                 _isLive = false;
-                Debug.Log("Умер");
                 break;
             case CharacterState.Roll:
-                _animator.SetTrigger("Roll");
+                _animator.SetTrigger(rollAnimation);
                 break;
         }
 
