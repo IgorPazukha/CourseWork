@@ -10,7 +10,6 @@ public class AudioAmbient : MonoBehaviour
 
     private AudioSource _audioSource;
     private Coroutine _coroutine;
-    private float _timeDuration;
     private void Start()
     {
         _audioSource = GetComponent<AudioSource>();
@@ -35,8 +34,7 @@ public class AudioAmbient : MonoBehaviour
     {
         while(_audioSource.volume != _maxVolume)
         {
-            _timeDuration += _timeTransation * Time.deltaTime;
-            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, _maxVolume, _timeDuration);
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, _maxVolume, _timeTransation * Time.deltaTime);
 
             yield return null;
         }

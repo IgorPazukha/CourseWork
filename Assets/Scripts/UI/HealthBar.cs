@@ -8,9 +8,8 @@ public class HealthBar : MonoBehaviour
     [SerializeField] private Image _healthBar;
     [SerializeField] private Color _maxHealthColor;
     [SerializeField] private Player _player;
+    [SerializeField] private float _timeDuration;
 
-    private float _timeTransation = 20f;
-    private float _timeDuration;
     private Color _minHealthColor = Color.red;
     private Coroutine _coroutine;
     private Slider _slider;
@@ -47,8 +46,7 @@ public class HealthBar : MonoBehaviour
         {
             float colorChange = _player.Health / _player.MaxHealth;
 
-            _timeDuration = _timeTransation * Time.deltaTime;
-            _slider.value = Mathf.MoveTowards(_slider.value, _player.Health, _timeDuration);
+            _slider.value = Mathf.MoveTowards(_slider.value, _player.Health, _timeDuration * Time.deltaTime);
             _healthBar.color = Color.Lerp(_minHealthColor, _maxHealthColor, colorChange);
 
             yield return null;
