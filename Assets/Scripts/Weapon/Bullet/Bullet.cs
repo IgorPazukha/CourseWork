@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public abstract class Bullet : MonoBehaviour
 {
     [SerializeField] private int _damage;

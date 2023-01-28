@@ -10,13 +10,16 @@ public class PlayerState : MonoBehaviour
     [SerializeField] private float _gravity;
     [SerializeField] private float _rotationAngle;
     [SerializeField] private float _rollSpeed;
+    [SerializeField] private float _gravityMultiply;
 
     private CharacterController _characterController;
     private Vector3 _movmentVelocity;
     private PlayerInput _playerInput;
     private float _verticalVelocity;
-    private int attackAnimation = Animator.StringToHash("Attack");
-    private int rollAnimation = Animator.StringToHash("Roll");
+    private int _attackAnimation = Animator.StringToHash("Attack");
+    private int _rollAnimation = Animator.StringToHash("Roll");
+    private int _speedAnimator = Animator.StringToHash("Speed");
+    private int _airBorneAnimator = Animator.StringToHash("AirBorne");
     private Animator _animator;
     private Player _player;
     private bool _isAttack;
@@ -52,34 +55,6 @@ public class PlayerState : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
     }
 
-    private void CalculatePlayerMovment()
-    {
-        if (_playerInput.MouseButtonDown && _characterController.isGrounded)
-        {
-            SwitchStateTo(CharacterState.Attacking);
-            return;
-        }
-        else if(_playerInput.SpaceKeyDown && _characterController.isGrounded)
-        {
-            SwitchStateTo(CharacterState.Roll);
-            return;
-        }
-
-        _movmentVelocity.Set(_playerInput.HorizontalInput, 0f, _playerInput.VerticalInput);
-        _movmentVelocity.Normalize();
-        _movmentVelocity = Quaternion.Euler(0, _rotationAngle, 0) * _movmentVelocity;
-
-        _animator.SetFloat("Speed", _movmentVelocity.magnitude);
-        _animator.SetBool("AirBorne", !_characterController.isGrounded);
-
-        _movmentVelocity *= _moveSpeed * Time.deltaTime;
-
-        if (_movmentVelocity != Vector3.zero)
-            transform.rotation = Quaternion.LookRotation(_movmentVelocity);
-
-        PlayAudioStep();
-    }
-
     private void FixedUpdate()
     {
         switch (_currentState)
@@ -100,11 +75,54 @@ public class PlayerState : MonoBehaviour
         if (_characterController.isGrounded == false)
             _verticalVelocity = _gravity;
         else
-            _verticalVelocity = _gravity * 0.3f;
+            _verticalVelocity = _gravity * _gravityMultiply;
 
         _movmentVelocity += _verticalVelocity * Vector3.up * Time.deltaTime;
 
         _characterController.Move(_movmentVelocity);
+    }
+
+    public void OutRoll()
+    {
+        SwitchStateTo(CharacterState.Normal);
+    }
+
+    public void OutAttack()
+    {
+        _isAttack = false;
+    }
+
+    public void InAttack()
+    {
+        _isAttack = true;
+    }
+
+    private void CalculatePlayerMovment()
+    {
+        if (_playerInput.MouseButtonDown && _characterController.isGrounded)
+        {
+            SwitchStateTo(CharacterState.Attacking);
+            return;
+        }
+        else if (_playerInput.SpaceKeyDown && _characterController.isGrounded)
+        {
+            SwitchStateTo(CharacterState.Roll);
+            return;
+        }
+
+        _movmentVelocity.Set(_playerInput.HorizontalInput, 0f, _playerInput.VerticalInput);
+        _movmentVelocity.Normalize();
+        _movmentVelocity = Quaternion.Euler(0, _rotationAngle, 0) * _movmentVelocity;
+
+        _animator.SetFloat(_speedAnimator, _movmentVelocity.magnitude);
+        _animator.SetBool(_airBorneAnimator, !_characterController.isGrounded);
+
+        _movmentVelocity *= _moveSpeed * Time.deltaTime;
+
+        if (_movmentVelocity != Vector3.zero)
+            transform.rotation = Quaternion.LookRotation(_movmentVelocity);
+
+        PlayAudioStep();
     }
 
     private void SwitchStateTo(CharacterState newState)
@@ -130,7 +148,7 @@ public class PlayerState : MonoBehaviour
                 break;
             case CharacterState.Attacking:
                 _isAttack = true;
-                _animator.SetTrigger(attackAnimation);
+                _animator.SetTrigger(_attackAnimation);
                 _player.CurrentWeapon.Shoot();
 
                 newState = CharacterState.Normal;
@@ -139,7 +157,7 @@ public class PlayerState : MonoBehaviour
                 _isLive = false;
                 break;
             case CharacterState.Roll:
-                _animator.SetTrigger(rollAnimation);
+                _animator.SetTrigger(_rollAnimation);
                 break;
         }
 
@@ -155,20 +173,5 @@ public class PlayerState : MonoBehaviour
     {
         if(_playerInput.HorizontalInput == 0 && _playerInput.VerticalInput == 0)
             _audioSource.Play();
-    }
-
-    public void OutRoll()
-    {
-        SwitchStateTo(CharacterState.Normal);
-    }
-
-    public void OutAttack()
-    {
-        _isAttack = false;
-    }
-
-    public void InAttack()
-    {
-        _isAttack = true;
     }
 }

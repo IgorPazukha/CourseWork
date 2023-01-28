@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerState))]
 public class PlayerInput : MonoBehaviour
 {
     private float _horizontalInput;
@@ -38,11 +39,6 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
-    private void OnDisable()
-    {
-        ClearCache();
-    }
-
     public void ClearCache()
     {
         _mouseButtonDown = false;
@@ -59,5 +55,10 @@ public class PlayerInput : MonoBehaviour
     public void EnableWorking()
     {
         _isWorking = true;
+    }
+
+    private void OnDisable()
+    {
+        ClearCache();
     }
 }

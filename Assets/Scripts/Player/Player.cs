@@ -19,19 +19,6 @@ public class Player : MonoBehaviour
     public event UnityAction Dying;
     public Action HasChangeHealth;
     public Action<int> HasChangeCoin;
-
-    private void AddHealth(float health)
-    {
-        _health = Mathf.Clamp(_health += health, _minHealht, _maxHealth);
-        HasChangeHealth?.Invoke();
-    }
-
-    private void AddCoin(int coin)
-    {
-        _coin += coin;
-        HasChangeCoin?.Invoke(_coin);
-    }
-
     public void TakeDamage(float damage)
     {
         _health = Mathf.Clamp(_health -= damage, _minHealht, _maxHealth);
@@ -54,5 +41,17 @@ public class Player : MonoBehaviour
                 AddCoin(item.Value);
                 break;
         }
+    }
+
+    private void AddHealth(float health)
+    {
+        _health = Mathf.Clamp(_health += health, _minHealht, _maxHealth);
+        HasChangeHealth?.Invoke();
+    }
+
+    private void AddCoin(int coin)
+    {
+        _coin += coin;
+        HasChangeCoin?.Invoke(_coin);
     }
 }

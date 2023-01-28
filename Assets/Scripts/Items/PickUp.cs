@@ -15,7 +15,7 @@ public class PickUp : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.TryGetComponent<Player>(out Player player))
+        if(other.TryGetComponent(out Player player))
         {
             other.gameObject.GetComponent<Player>().PickUpItem(this);
 
